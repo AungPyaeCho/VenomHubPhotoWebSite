@@ -12,15 +12,12 @@ namespace VenomHubPhotoWebSiteAdminPanel.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
         [StringLength(100)]
         public string? CategoryName { get; set; }
 
-        [Required]
         [StringLength(100)]
         public string? CategoryDescription { get; set; }
 
-        [Required]
         [StringLength(250)]
         public string? CategoryPhoto { get; set; }
 

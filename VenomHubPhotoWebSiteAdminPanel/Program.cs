@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VenomHubPhotoWebSiteAdminPanel.Db;
+using VenomHubPhotoWebSiteAdminPanel.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped(typeof(CRUDService<>)); // Register the generic service
 
 var app = builder.Build();
 
