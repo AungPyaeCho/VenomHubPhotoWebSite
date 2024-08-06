@@ -56,16 +56,16 @@
 
             <!-- Products Section -->
             <div class="sidebar-heading">
-                Products
+                Albums
             </div>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAlbum" aria-expanded="true" aria-controls="collapseAlbum">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAlbum" aria-expanded="false" aria-controls="collapseAlbum">
                     <i class="fas fa-boxes"></i>
                     <span>Albums</span>
                 </a>
                 <div id="collapseAlbum" class="collapse" aria-labelledby="headingAlbum" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
+                    <div class="bg-light py-2 collapse-inner rounded">
                         <a class="collapse-item" asp-area="" asp-controller="Album" asp-action="Index">1. Albums</a>
                     </div>
                 </div>
@@ -79,13 +79,13 @@
             </div>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategory" aria-expanded="true" aria-controls="collapseCategory">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory">
                     <i class="fas fa-cash-register"></i>
                     <span>Category</span>
                 </a>
                 <div id="collapseCategory" class="collapse" aria-labelledby="headingCategory" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" asp-area="" asp-controller="Category" asp-action="Index">1. Category</a>
+                    <div class="bg-light py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-area="" asp-controller="Category" asp-action="Index">1. Categories</a>
                     </div>
                 </div>
             </li>
@@ -95,24 +95,22 @@
 
             <!-- Admin Section -->
             <div class="sidebar-heading">
-                Admin
+                Photo
             </div>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="true" aria-controls="collapseAdmin">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Accounts Control</span>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePhoto" aria-expanded="false" aria-controls="collapsePhoto">
+                    <i class="fas fa-image"></i>
+                    <span>Photos</span>
                 </a>
-                <div id="collapseAdmin" class="collapse" aria-labelledby="headingAdmin" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" asp-area="" asp-controller="Admin" asp-action="Index">1. Admin</a>
-                        <a class="collapse-item" asp-area="" asp-controller="Member" asp-action="Index">2. Member</a>
-                        <a class="collapse-item" asp-area="" asp-controller="Staff" asp-action="Index">3. Staff</a>
+                <div id="collapsePhoto" class="collapse" aria-labelledby="headingPhoto" data-parent="#accordionSidebar">
+                    <div class="bg-light py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-area="" asp-controller="Photo" asp-action="Index">1. Photos</a>
                     </div>
                 </div>
             </li>
 
-            <li class="nav-item">
+@*             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRecord" aria-expanded="true" aria-controls="collapseRecord">
                     <i class="fas fa-book"></i>
                     <span>Login Records</span>
@@ -124,7 +122,7 @@
                         </a>
                     </div>
                 </div>
-            </li>
+            </li> *@
 
 
             <!-- Divider -->

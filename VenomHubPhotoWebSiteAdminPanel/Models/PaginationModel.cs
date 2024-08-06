@@ -17,7 +17,7 @@
         public List<T> Data { get; set; } = new List<T>();
     }
 
-    public class AlbumnResopnseModel : PaginatedResponseModel<AlbumModel> { }
-    public class CategoryResopnseModel : PaginatedResponseModel<CategoryModel> { }
-    public class PhotoResopnseModel : PaginatedResponseModel<PhotoModel> { }
+    public class AlbumResponseModel : PaginatedResponseModel<AlbumModel> { }
+    public class CategoryResponseModel : PaginatedResponseModel<CategoryModel> { }
+    public class PhotoResponseModel : PaginatedResponseModel<PhotoModel> { }
 }

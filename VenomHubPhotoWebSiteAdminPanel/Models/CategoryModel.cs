@@ -21,7 +21,7 @@ namespace VenomHubPhotoWebSiteAdminPanel.Models
         [StringLength(250)]
         public string? CategoryPhoto { get; set; }
 
-        public DateTime AlbumCreateAt { get; set; } = DateTime.UtcNow;
+        public DateTime CategoryCreateAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<PhotoModel> Photos { get; set; }
     }

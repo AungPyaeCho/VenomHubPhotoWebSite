@@ -30,7 +30,7 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
                 .Take(pageSize)
                 .ToList();
 
-            AlbumnResopnseModel response = new()
+            AlbumResponseModel response = new()
             {
                 Data = list,
                 Pagination = new PaginationModel

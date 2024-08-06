@@ -22,13 +22,13 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
         [ActionName("Index")]
         public async Task<IActionResult> CategoryIndex(int pageNo = 1, int pageSize = 10)
         {
-            var response = await _CRUDService.GetPagedData<CategoryResopnseModel>(pageNo, pageSize);
+            var response = await _CRUDService.GetPagedData<CategoryResponseModel>(pageNo, pageSize);
             return View("CategoryIndex", response);
         }
 
 
         [ActionName("Create")]
-        public IActionResult AlbumCreate()
+        public IActionResult CategoryCreate()
         {
             return View("CategoryCreate");
         }

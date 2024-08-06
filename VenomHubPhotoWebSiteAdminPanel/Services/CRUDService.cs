@@ -68,6 +68,13 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> UpdateData(T entity)
+        {
+            // Ensure that the entity is tracked by the context and updates are applied
+            _context.Set<T>().Update(entity);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> Update(T entity, IFormFile photo = null, string photoPropertyName = null, bool updatePhoto = false, string folderName = "uploads")
         {
             
@@ -113,11 +120,6 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
 
             return uniqueFileName;
         }
-
-
-
-
-
 
         public async Task<bool> Delete(int id, string photoPropertyName = null)
         {
