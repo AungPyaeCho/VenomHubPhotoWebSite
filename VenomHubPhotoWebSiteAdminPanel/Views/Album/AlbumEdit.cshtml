@@ -1,0 +1,122 @@
+﻿@model AlbumModel
+@{
+    ViewData["Title"] = "Edit Album";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Update Album</h5>
+
+                    <form id="albumForm" class="user" enctype="multipart/form-data">
+
+                        <div class="form-group">
+                            <label for="albumName">Album Name</label>
+                            <input id="albumName" class="form-control" placeholder="Enter album name" value="@Model.AlbumName" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="albumDescription">Album Description</label>
+                            <textarea id="albumDescription" class="form-control" placeholder="Enter album description">@Model.AlbumDescription</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="albumPhoto">Album Photo</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="albumPhoto" name="albumPhoto" disabled>
+                                <label class="custom-file-label" for="albumPhoto">Choose file...</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="updatePhoto">
+                                <label class="form-check-label" for="updatePhoto">Update current photo</label>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.AlbumPhoto))
+                        {
+                            <div class="mt-3">
+                                <label>Current Photo:</label><br />
+                                <img src="@Model.AlbumPhoto" alt="Current Photo" class="img-thumbnail" style="max-width: 300px; max-height: 300px;" />
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success" id="btnUpdate">
+                                Update Album
+                            </button>
+                            <a href="/Album" class="btn btn-dark mt-2">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#albumPhoto').prop('disabled', true);
+
+            $('#updatePhoto').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#albumPhoto').prop('disabled', false); // Enable file upload
+                } else {
+                    $('#albumPhoto').prop('disabled', true); // Disable file upload
+                }
+            });
+
+            $('#btnUpdate').click(function () {
+                let Id = @Model.Id;
+                let albumName = $('#albumName').val();
+                let albumDescription = $('#albumDescription').val();
+                let albumPhoto = $('#albumPhoto')[0].files[0]; // Get the selected file
+                let updatePhoto = $('#updatePhoto').is(':checked'); // Checkbox to update photo
+
+                let formData = new FormData();
+                formData.append('Id', Id);
+                formData.append('albumName', albumName);
+                formData.append('albumDescription', albumDescription);
+
+                if (albumPhoto && updatePhoto) {
+                    formData.append('albumPhoto', albumPhoto); // Append the file if selected and checkbox is checked
+                }
+
+                formData.append('updatePhoto', updatePhoto);
+
+                $.ajax({
+                    url: "/Album/Update/" + Id,
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Album";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}
