@@ -1,4 +1,4 @@
-﻿@model VenomHubPhotoWebSiteAdminPanel.Models.PhotoResponseModel
+﻿@model PaginatedResponseModel<PhotoModel>
 
 @{
     ViewData["Title"] = "Photo";
@@ -10,8 +10,16 @@
     string _pageURL(int pageNo) => $"/Photo/Index?pageNo={pageNo}&pageSize={_pageSize}";
 }
 
+@* <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Photo List</h5>
+ *@
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Photo Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Photos Management</h1>
     <a href="/Photo/Create" class="btn btn-success mr-2">
         <i class="fas fa-plus-circle"></i> Add Photo
     </a>
@@ -34,7 +42,7 @@
         @foreach (var item in Model.Data)
         {
             <tr>
-                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                <td scope="row">@(++count + (_pageNo - 1) * _pageSize)</td>
                 <td>@item.PhotoName</td>
                 <td>@item.PhotoDescription</td>
                 <td>
@@ -64,7 +72,7 @@
 
     <tfoot>
         <tr>
-            <td colspan="6" class="text-center">
+            <td colspan="8" class="text-center">
                 <nav aria-label="Pagination">
                     <ul class="pagination justify-content-center">
                         @if (_pageNo == 1)
@@ -153,6 +161,11 @@
         </tr>
     </tfoot>
 </table>
+@* </div>
+            </div>
+        </div>
+    </div>
+</div> *@
 
 @section scripts {
     <script>

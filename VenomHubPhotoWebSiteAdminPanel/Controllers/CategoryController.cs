@@ -59,9 +59,9 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
 
         [HttpPost]
         [ActionName("Update")]
-        public async Task<IActionResult> CategoryUpdate(CategoryModel categoryModel, IFormFile categoryPhoto, bool updatePhoto)
+        public async Task<IActionResult> CategoryUpdate(int Id,CategoryModel categoryModel, IFormFile categoryPhoto, bool updatePhoto)
         {
-            bool result = await _CRUDService.Update(categoryModel, categoryPhoto, nameof(categoryModel.CategoryPhoto), updatePhoto, "category");
+            bool result = await _CRUDService.Update(Id,categoryModel, categoryPhoto, nameof(categoryModel.CategoryPhoto), updatePhoto, "category");
             var msg = new MsgResponseModel
             {
                 IsSuccess = result,

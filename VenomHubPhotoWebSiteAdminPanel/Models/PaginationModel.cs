@@ -1,4 +1,5 @@
-﻿namespace VenomHubPhotoWebSiteAdminPanel.Models
+﻿
+namespace VenomHubPhotoWebSiteAdminPanel.Models
 {
     public class PaginationModel
     {
@@ -15,6 +16,11 @@
     {
         public PaginationModel Pagination { get; set; } = new PaginationModel();
         public List<T> Data { get; set; } = new List<T>();
+
+        public static implicit operator PaginatedResponseModel<T>(PaginatedResponseModel<PhotoResponseModel> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class AlbumResponseModel : PaginatedResponseModel<AlbumModel> { }

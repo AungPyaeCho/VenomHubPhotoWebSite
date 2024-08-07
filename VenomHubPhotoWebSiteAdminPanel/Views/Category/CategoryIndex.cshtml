@@ -32,7 +32,7 @@
         @foreach (var item in Model.Data)
         {
             <tr>
-                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                <td scope="row">@(++count + (_pageNo - 1) * _pageSize)</td>
                 <td>@item.CategoryName</td>
                 <td>@item.CategoryDescription</td>
                 <td>

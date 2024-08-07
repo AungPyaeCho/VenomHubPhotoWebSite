@@ -1,30 +1,57 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VenomHubPhotoWebSiteAdminPanel.Db;
 using VenomHubPhotoWebSiteAdminPanel.Models;
 using VenomHubPhotoWebSiteAdminPanel.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace VenomHubPhotoWebSiteAdminPanel.Controllers
 {
     public class PhotoController : Controller
     {
         private readonly CRUDService<PhotoModel> _CRUDService;
+        private readonly CRUDService<CategoryModel> _categoryService;
+        private readonly CRUDService<AlbumModel> _albumService;
+        private readonly AppDbContext _appDbContext;
 
-        public PhotoController(CRUDService<PhotoModel> cRUDService)
+        public PhotoController(CRUDService<PhotoModel> cRUDService, CRUDService<CategoryModel> categoryService, CRUDService<AlbumModel> albumService, AppDbContext appDbContext)
         {
             _CRUDService = cRUDService;
+            _categoryService = categoryService;
+            _albumService = albumService;
+            _appDbContext = appDbContext;
         }
 
         [ActionName("Index")]
         public async Task<IActionResult> PhotoIndex(int pageNo = 1, int pageSize = 10)
         {
-            var response = await _CRUDService.GetPagedData<PhotoResponseModel>(pageNo, pageSize);
+            var response = await _CRUDService.GetPhotoPagedData(pageNo, pageSize);
+            
             return View("PhotoIndex", response);
         }
 
 
         [ActionName("Create")]
-        public IActionResult PhotoCreate()
+        public async Task<IActionResult> PhotoCreate()
         {
-            return View("PhotoCreate");
+            try
+            {
+                // Retrieve categories and albums asynchronously
+                var categories = await _categoryService.GetValues();
+                var albums = await _albumService.GetValues();
+
+                // Pass the data to the view using ViewBag
+                ViewBag.Categories = categories;
+                ViewBag.Albums = albums;
+
+                // Return the "PhotoCreate" view
+                return View("PhotoCreate");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while loading the create item page: {ex.Message}");
+                return View("PhotoCreate");
+            }
+            
         }
 
         [HttpPost]
@@ -48,23 +75,68 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
             {
                 return Redirect("/Photo");
             }
-            return View("PhotoEdit", item);
+
+            int catgeoryId = Convert.ToInt32(item.CategoryId);
+            int albumId = Convert.ToInt32(item.AlbumId);
+
+            var category= await _categoryService.GetById(catgeoryId);
+            var album = await _albumService.GetById(albumId);
+
+            var list = new PhotoModel
+            {
+                Id = item.Id,
+                PhotoName = item.PhotoName,
+                PhotoDescription = item.PhotoDescription,
+                Photo = item.Photo,
+                CategoryId = category.Id,
+                CategoryName = category.CategoryName,
+                AlbumId = album.Id,
+                AlbumName = album.AlbumName
+            };
+            var categories = await _categoryService.GetValues();
+            var albums = await _albumService.GetValues();
+
+            // Pass the data to the view using ViewBag
+            ViewBag.Categories = categories;
+            ViewBag.Albums = albums;
+
+            return View("PhotoEdit", list);
         }
 
         [HttpPost]
         [ActionName("Update")]
-        public async Task<IActionResult> PhotoUpdate(PhotoModel photoModel, IFormFile Photo, bool updatePhoto)
+        public async Task<IActionResult> PhotoUpdate(int Id,PhotoModel photoModel, IFormFile Photo, bool updatePhoto)
         {
-            bool result = await _CRUDService.Update(photoModel, Photo, nameof(photoModel.Photo), updatePhoto, "photo");
-            var msg = new MsgResponseModel
+            try
             {
-                IsSuccess = result,
-                ResponseMessage = result ? "Update Success" : "Update Fail"
-            };
-            return Json(msg);
+                bool result = await _CRUDService.Update(Id, photoModel, Photo, nameof(photoModel.Photo), updatePhoto, "photo");
+                var msg = new MsgResponseModel
+                {
+                    IsSuccess = result,
+                    ResponseMessage = result ? "Update Success" : "Update Fail"
+                };
+                return Json(msg);
+
+                //bool result = await _CRUDService.Update(Id,photoModel, Photo, nameof(photoModel.Photo), updatePhoto, "photo");
+                //var msg = new MsgResponseModel
+                //{
+                //    IsSuccess = result,
+                //    ResponseMessage = result ? "Update Success" : "Update Fail"
+                //};
+                //return Json(msg);
+            }
+            catch (Exception ex)
+            {
+                //var msg = new MsgResponseModel
+                //{
+                //    IsSuccess = false,
+                //    ResponseMessage = ex.Message
+                //};
+                //return Json(msg);
+                ModelState.AddModelError("", $"An error occurred while loading items: {ex.Message}");
+                return View("PhotoIndex");
+            }
         }
-
-
 
         [HttpPost]
         [ActionName("Delete")]

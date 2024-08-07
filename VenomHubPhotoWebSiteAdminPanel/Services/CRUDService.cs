@@ -40,6 +40,47 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
             return response;
         }
 
+        public async Task<PaginatedResponseModel<PhotoModel>> GetPhotoPagedData(int pageNo = 1, int pageSize = 10)
+        {
+            var query = from photo in _context.Photos
+                        join category in _context.Categories on photo.CategoryId equals category.Id
+                        join album in _context.Albums on photo.AlbumId equals album.Id
+                        select new PhotoModel
+                        {
+                            Id = photo.Id,
+                            PhotoName = photo.PhotoName,
+                            PhotoDescription = photo.PhotoDescription,
+                            Photo = photo.Photo,
+                            CategoryId = photo.CategoryId,
+                            CategoryName = category.CategoryName,
+                            AlbumId = photo.AlbumId,
+                            AlbumName = album.AlbumName
+                        };
+
+            int rowCount = await query.CountAsync();
+            int pageCount = (int)Math.Ceiling((double)rowCount / pageSize);
+
+            List<PhotoModel> list = await query
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            PaginatedResponseModel<PhotoModel> response = new()
+            {
+                Data = list,
+                Pagination = new PaginationModel
+                {
+                    PageNo = pageNo,
+                    PageSize = pageSize,
+                    PageCount = pageCount
+                }
+            };
+
+            return response;
+        }
+
+
+
         public async Task<R> GetPagedData<R>(int pageNo = 1, int pageSize = 10) where R : PaginatedResponseModel<T>, new()
         {
             var genericResponse = await GetPagedData(pageNo, pageSize);
@@ -50,10 +91,15 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
             };
             return response;
         }
-
+        
         public async Task<T> GetById(int id)
         {
             return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<List<T>> GetValues()
+        {
+            return await _context.Set<T>().ToListAsync();
         }
 
         public async Task<bool> Create(T entity, IFormFile photo = null, string photoPropertyName = null, string folderName = "uploads")
@@ -75,13 +121,20 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> Update(T entity, IFormFile photo = null, string photoPropertyName = null, bool updatePhoto = false, string folderName = "uploads")
+        public async Task<bool> Update(int Id,T entity, IFormFile photo = null, string photoPropertyName = null, bool updatePhoto = false, string folderName = "uploads")
         {
-            
+            var existingEntity = await _context.Set<T>().FindAsync(Id);
+            if (existingEntity == null)
+            {
+                return false; // Entity not found
+            }
+
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+
             if (updatePhoto && photo != null && photoPropertyName != null)
             {
                 // Delete the old photo if it exists
-                string currentPhotoPath = (string)typeof(T).GetProperty(photoPropertyName).GetValue(entity);
+                string currentPhotoPath = (string)typeof(T).GetProperty(photoPropertyName).GetValue(existingEntity);
                 if (!string.IsNullOrEmpty(currentPhotoPath))
                 {
                     string oldPhotoPath = Path.Combine(_webHostEnvironment.WebRootPath, currentPhotoPath.TrimStart('/'));
@@ -93,11 +146,10 @@ namespace VenomHubPhotoWebSiteAdminPanel.Services
 
                 // Save the new photo
                 string uniqueFileName = SavePhoto(photo, folderName);
-                typeof(T).GetProperty(photoPropertyName).SetValue(entity, $"/{folderName}/{uniqueFileName}");
+                typeof(T).GetProperty(photoPropertyName).SetValue(existingEntity, $"/{folderName}/{uniqueFileName}");
             }
 
-            // Ensure other properties of the entity are tracked for updates
-            _context.Set<T>().Update(entity);
+            _context.Set<T>().Update(existingEntity);
             return await _context.SaveChangesAsync() > 0;
         }
 

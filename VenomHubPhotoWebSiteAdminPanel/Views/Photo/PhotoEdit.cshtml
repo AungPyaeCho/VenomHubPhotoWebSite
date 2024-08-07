@@ -1,0 +1,251 @@
+﻿@model PhotoModel
+@{
+    ViewData["Title"] = "Update Photo";
+    var _categories = ViewBag.Categories as List<CategoryModel>;
+    var _albums = ViewBag.Albums as List<AlbumModel>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Update Photo</h5>
+
+                    <form id="photoForm" class="user" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="photoName">Photo Name</label>
+                            <input id="photoName" class="form-control" placeholder="Enter photo name" value="@Model.PhotoName" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photoDescription">Photo Description</label>
+                            <textarea id="photoDescription" class="form-control" placeholder="Enter photo description">@Model.PhotoDescription</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="photo">Photo</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="photo" name="photo" disabled>
+                                <label class="custom-file-label" for="categoryPhoto">Choose file...</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="updatePhoto">
+                                <label class="form-check-label" for="updatePhoto">Update current photo</label>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Photo))
+                        {
+                            <div class="mt-3">
+                                <label>Current Photo:</label><br />
+                                <img src="@Model.Photo" alt="Current Photo" class="img-thumbnail" style="max-width: 300px; max-height: 300px;" />
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label for="categoryId">Category</label>
+                            <select id="categoryId" class="form-control">
+                                <option value="@Model.CategoryId">@Model.CategoryName</option>
+                                @foreach (var category in _categories)
+                                {
+                                    <option value="@category.Id">@category.CategoryName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="albumId">Album</label>
+                            <select id="albumId" class="form-control">
+                                <option value="@Model.AlbumId">@Model.AlbumName</option>
+                                @foreach (var album in _albums)
+                                {
+                                    <option value="@album.Id">@album.AlbumName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success" id="btnUpdate">
+                                Update Photo
+                            </button>
+                            <a href="/Photo" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#photo').prop('disabled', true);
+
+            $('#updatePhoto').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#photo').prop('disabled', false); // Enable file upload
+                } else {
+                    $('#photo').prop('disabled', true); // Disable file upload
+                }
+            });
+
+            $('#btnUpdate').click(function () {
+                let Id = @Model.Id; // Use hidden field to get the Id
+                let photoName = $('#photoName').val();
+                let photoDescription = $('#photoDescription').val();
+                let photo = $('#photo')[0].files[0]; // Get the selected file
+                let categoryId = $('#categoryId').val();
+                let albumId = $('#albumId').val();
+                let currentPhotoPath = '@Model.Photo'.trim();
+                let updatePhoto = $('#updatePhoto').is(':checked'); // Checkbox to update photo
+
+                // Validate other fields (omitted for brevity)
+
+                let formData = new FormData();
+                formData.append('Id', Id);
+                formData.append('photoName', photoName);
+                formData.append('photoDescription', photoDescription);
+                if (photo && updatePhoto) {
+                    formData.append('photo', photo); // Append the file
+                } else {
+                    formData.append('photo', currentPhotoPath); // Use existing photo path if no new photo is uploaded
+                }
+                formData.append('categoryId', categoryId);
+                formData.append('albumId', albumId);
+                formData.append('updatePhoto', updatePhoto); // Pass the checkbox state
+
+                $.ajax({
+                    url: "/Photo/Update/" + Id,
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Photo";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An error occurred while updating.",
+                            icon: "error"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+@* @section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#photo').prop('disabled', true);
+
+            $('#updatePhoto').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#photo').prop('disabled', false); // Enable file upload
+                } else {
+                    $('#photo').prop('disabled', true); // Disable file upload
+                }
+            });
+
+            $('#btnUpdate').click(function () {
+                let Id = @Model.Id; // Assuming you have the Photo Id in the model
+                let photoName = $('#photoName').val();
+                let photoDescription = $('#photoDescription').val();
+                let photo = $('#photo')[0].files[0]; // Get the selected file
+                let categoryId = $('#categoryId').val();
+                let albumId = $('#albumId').val();
+                let currentPhotoPath = '@Model.Photo'.trim();
+                let updatePhoto = $('#updatePhoto').is(':checked'); // Checkbox to update photo
+
+                // Validate other fields (omitted for brevity)
+
+                let formData = new FormData();
+                formData.append('Id', Id);
+                formData.append('photoName', photoName);
+                formData.append('photoDescription', photoDescription);
+                if (photo && updatePhoto) {
+                    formData.append('photo', photo); // Append the file
+                } else {
+                    formData.append('photo', currentPhotoPath); // Use existing photo path if no new photo is uploaded
+                }
+                if (!categoryId) {
+                    categoryId = '@Model.CategoryId';
+                    formData.append('categoryId', categoryId);// Replace with the value you want to use from ViewBag
+                }
+                else
+                {
+                    formData.append('categoryId', categoryId);
+                }
+
+                if (!albumId) {
+                    albumId = '@Model.AlbumId';
+                    formData.append('albumId', albumId);// Replace with the value you want to use from ViewBag
+                }
+                else {
+                    formData.append('albumId', albumId);
+                }
+
+                $.ajax({
+                    url: "/Photo/Update/" + Id,
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.isSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Photo";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An error occurred while updating.",
+                            icon: "error"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+ *@
