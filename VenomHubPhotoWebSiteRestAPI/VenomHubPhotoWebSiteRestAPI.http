@@ -1,0 +1,6 @@
+@VenomHubPhotoWebSiteRestAPI_HostAddress = http://localhost:5169
+
+GET {{VenomHubPhotoWebSiteRestAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

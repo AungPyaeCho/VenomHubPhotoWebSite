@@ -74,6 +74,8 @@
                 let photo = $('#photo')[0].files[0]; // Get the selected file
                 let categoryId = $('#categoryId').val();
                 let albumId = $('#albumId').val();
+                // let categoryName = $('#categoryId option:selected').text();
+                // let albumName = $('#albumId option:selected').text();
 
                 // Validate other fields (omitted for brevity)
 
@@ -82,7 +84,9 @@
                 formData.append('photoDescription', photoDescription);
                 formData.append('photo', photo); // Append the file
                 formData.append('categoryId', categoryId);
+                //formData.append('categoryName', categoryName); // Append category name
                 formData.append('albumId', albumId);
+                //formData.append('albumName', albumName);
 
                 $.ajax({
                     url: "/Photo/Save",

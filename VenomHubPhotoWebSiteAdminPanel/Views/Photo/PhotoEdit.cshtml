@@ -102,7 +102,9 @@
                 let categoryId = $('#categoryId').val();
                 let albumId = $('#albumId').val();
                 let currentPhotoPath = '@Model.Photo'.trim();
-                let updatePhoto = $('#updatePhoto').is(':checked'); // Checkbox to update photo
+                let updatePhoto = $('#updatePhoto').is(':checked');
+                //let categoryName = $('#categoryId option:selected').text();
+                //let albumName = $('#albumId option:selected').text();// Checkbox to update photo
 
                 // Validate other fields (omitted for brevity)
 
@@ -116,8 +118,9 @@
                     formData.append('photo', currentPhotoPath); // Use existing photo path if no new photo is uploaded
                 }
                 formData.append('categoryId', categoryId);
+                //formData.append('categoryName', categoryName); // Append category name
                 formData.append('albumId', albumId);
-                formData.append('updatePhoto', updatePhoto); // Pass the checkbox state
+                //formData.append('albumName', albumName); // Pass the checkbox state
 
                 $.ajax({
                     url: "/Photo/Update/" + Id,

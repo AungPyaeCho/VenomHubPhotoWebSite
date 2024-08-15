@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 using VenomHubPhotoWebSiteAdminPanel.Db;
+using VenomHubPhotoWebSiteAdminPanel.Migrations;
 using VenomHubPhotoWebSiteAdminPanel.Models;
 
 namespace VenomHubPhotoWebSiteAdminPanel.Controllers
@@ -64,8 +65,8 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                var uniqueFileName = albumModel.AlbumName + "_" + Path.GetFileName(albumPhoto.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                string uniqueFileName = $"{Guid.NewGuid()}_{albumPhoto.FileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {

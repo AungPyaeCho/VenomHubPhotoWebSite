@@ -24,8 +24,8 @@ namespace VenomHubPhotoWebSiteAdminPanel.Controllers
         [ActionName("Index")]
         public async Task<IActionResult> PhotoIndex(int pageNo = 1, int pageSize = 10)
         {
-            var response = await _CRUDService.GetPhotoPagedData(pageNo, pageSize);
-            
+            //var response = await _CRUDService.GetPagedData(pageNo, pageSize);
+            var response = await _CRUDService.GetPhotoPagedData(pageNo,pageSize);
             return View("PhotoIndex", response);
         }
 
